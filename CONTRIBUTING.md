@@ -40,7 +40,7 @@ is the bar for a pull request.
 
 ## WASM size budget
 
-`MAX_WASM_BYTES` in the `Makefile` and CI is **21,000 bytes**: the first optimized build was 17,081 bytes, plus about 20% headroom. CI fails when the build exceeds it.
+`MAX_WASM_BYTES` in the `Makefile` and CI is **21,000 bytes**: the first optimized build was 17,081 bytes, CI builds with plain cargo at about 19,194 bytes before the Stellar CLI optimization pass, so the headroom is about 9%. CI fails when the build exceeds it.
 
 ## Commit style
 
