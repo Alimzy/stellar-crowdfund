@@ -1,0 +1,23 @@
+[package]
+name = "crowdfund"
+description = "All-or-nothing crowdfunding with deadlines, refunds and cancellation for Soroban (SEP-41)"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+publish = false
+
+[lib]
+crate-type = ["cdylib"]
+doctest = false
+
+[lints]
+workspace = true
+
+[dependencies]
+soroban-sdk = { workspace = true }
+
+[dev-dependencies]
+soroban-sdk = { workspace = true, features = ["testutils"] }
+proptest = "1"

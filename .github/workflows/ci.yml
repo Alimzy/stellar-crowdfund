@@ -1,0 +1,80 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+env:
+  CARGO_TERM_COLOR: always
+  MAX_WASM_BYTES: 40000
+
+jobs:
+  fmt-clippy-test:
+    name: fmt, clippy, test, docs
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@1.85.0
+        with:
+          components: rustfmt, clippy
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo fmt --all -- --check
+      - run: cargo clippy --locked --all-targets -- -D warnings
+      - run: cargo test --locked
+      - run: cargo doc --locked --no-deps
+        env:
+          RUSTDOCFLAGS: -D warnings
+
+  msrv:
+    name: MSRV (1.84)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@1.84.0
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo check --locked --all-targets
+
+  build-wasm:
+    name: build optimized WASM
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@1.85.0
+        with:
+          targets: wasm32v1-none
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo build --locked --release --target wasm32v1-none -p crowdfund
+      - name: Report size and hash, enforce budget
+        run: |
+          f=target/wasm32v1-none/release/crowdfund.wasm
+          size=$(wc -c < "$f" | tr -d '[:space:]')
+          echo "size: $size bytes (budget: $MAX_WASM_BYTES bytes)"
+          sha256sum "$f"
+          if [ "$size" -gt "$MAX_WASM_BYTES" ]; then
+            echo "::error::WASM size ($size bytes) exceeds budget of $MAX_WASM_BYTES bytes"
+            exit 1
+          fi
+      - uses: actions/upload-artifact@v4
+        with:
+          name: crowdfund-wasm
+          path: target/wasm32v1-none/release/crowdfund.wasm
+
+  deny:
+    name: cargo-deny (bans, sources, licenses)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: EmbarkStudios/cargo-deny-action@v2
+        with:
+          command: check bans sources licenses
+
+  advisories:
+    name: cargo-deny (advisories, informational)
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: EmbarkStudios/cargo-deny-action@v2
+        with:
+          command: check advisories

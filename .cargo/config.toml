@@ -1,0 +1,3 @@
+# Pick dependency versions that still build on the workspace MSRV (1.84).
+[resolver]
+incompatible-rust-versions = "fallback"

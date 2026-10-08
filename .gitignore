@@ -1,0 +1,7 @@
+/target
+**/*.rs.bk
+.soroban/
+.stellar/
+*.wasm
+.env
+test_snapshots/
