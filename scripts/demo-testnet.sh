@@ -15,7 +15,7 @@ CREATOR=crowdfund-creator
 ALICE=crowdfund-alice
 BOB=crowdfund-bob
 PROOF=docs/testnet-proof.md
-WAIT_SECONDS=90
+WAIT_SECONDS=240
 
 need() { command -v "$1" >/dev/null || { echo "missing dependency: $1" >&2; exit 1; }; }
 need stellar
