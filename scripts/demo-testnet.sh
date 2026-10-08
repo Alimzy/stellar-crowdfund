@@ -45,9 +45,18 @@ CONTRACT=$(echo "$DEPLOY_LOG" | grep -oE 'C[A-Z2-7]{55}' | tail -1)
 DEPLOY_TX=$(echo "$DEPLOY_LOG" | tx_of)
 TOKEN=$(stellar contract id asset --asset native --network "$NET")
 
-invoke() { # invoke <source> <fn> [args...]
+invoke() { # invoke <source> <fn> [args...]; retries only on connection errors
   local src=$1; shift
-  stellar contract invoke --id "$CONTRACT" --source "$src" --network "$NET" -- "$@" 2>&1 | tee /dev/stderr
+  local out attempt
+  for attempt in 1 2 3; do
+    if out=$(stellar contract invoke --id "$CONTRACT" --source "$src" --network "$NET" -- "$@" 2>&1); then
+      echo "$out" >&2; echo "$out"; return 0
+    fi
+    echo "$out" >&2
+    echo "$out" | grep -q "client error (Connect)" || return 1
+    echo "network error, retrying ($attempt/3)..." >&2; sleep 5
+  done
+  return 1
 }
 
 DEADLINE=$(( $(date +%s) + WAIT_SECONDS ))

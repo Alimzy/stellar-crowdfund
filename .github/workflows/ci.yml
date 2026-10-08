@@ -7,7 +7,7 @@ on:
 
 env:
   CARGO_TERM_COLOR: always
-  MAX_WASM_BYTES: 40000
+  MAX_WASM_BYTES: 21000
 
 jobs:
   fmt-clippy-test:

@@ -40,9 +40,7 @@ is the bar for a pull request.
 
 ## WASM size budget
 
-`MAX_WASM_BYTES` in the `Makefile` and CI is deliberately generous (40,000) because the first
-CI run has not reported the real size yet. After it does, tighten it to the reported size plus
-about 20% and note the number here.
+`MAX_WASM_BYTES` in the `Makefile` and CI is **21,000 bytes**: the first optimized build was 17,081 bytes, plus about 20% headroom. CI fails when the build exceeds it.
 
 ## Commit style
 

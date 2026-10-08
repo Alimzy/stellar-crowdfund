@@ -21,7 +21,7 @@
 | Test suite catches regressions | Checked once by hand | Six deliberate bugs (fee guard removed, deadline off by one, goal `>` vs `>=`, refund keeps record, withdraw skips flag, TTL extension skipped) each failed the suite. Not automated yet (open issue: cargo-mutants in CI) |
 | `cargo fmt`, `clippy -D warnings`, `cargo doc -D warnings` | Yes | Run locally on Rust 1.85 |
 | Declared MSRV 1.84 builds code and tests | Yes | `cargo check --locked --all-targets` on rustc 1.84.1; `msrv` CI job repeats it |
-| Optimized WASM build and size | CI | `build-wasm` job; **not built locally**. The 40,000-byte budget is a placeholder until the first CI run reports the real size |
+| Optimized WASM build and size | Yes | `stellar contract build` gave 17,081 bytes (hash `8321b009...`); the `build-wasm` CI job repeats it against a 21,000-byte budget |
 | Testnet deployment and demo | Script ready | **Not run yet.** Run `scripts/demo-testnet.sh`; it fills the README proof table |
 | Dependency bans, sources and license allow-list | Yes | `cargo deny check bans sources licenses` passes locally (cargo-deny 0.16.4); the `deny` CI job repeats it |
 | Dependency security advisories | Not verified | CI job is informational; the advisory database could not be fetched locally |

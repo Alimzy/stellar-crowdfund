@@ -1,6 +1,6 @@
 .PHONY: test fmt lint check doc build size clean
 # Tighten after the first CI run reports the real size (see CONTRIBUTING.md).
-MAX_WASM_BYTES ?= 40000
+MAX_WASM_BYTES ?= 21000
 
 test:
 	cargo test --locked
